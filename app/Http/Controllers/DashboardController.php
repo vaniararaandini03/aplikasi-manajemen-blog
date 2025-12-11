@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
+use App\Models\User;
+use App\Models\Category;
+
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -11,20 +15,22 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $totalArticles   = \App\Models\Article::count();
-        $totalUsers      = \App\Models\User::count();
-        $totalCategories = \App\Models\Category::count();
-        $recentArticles  = \App\Models\Article::with('user','category')
-                                ->latest()
-                                ->take(5)
-                                ->get();
+         $totalArticles = Article::count();
+    $totalUsers = User::count();
+    $totalCategories = Category::count();
 
-        return view('admin.dashboard', compact(
-            'totalArticles',
-            'totalUsers',
-            'totalCategories',
-            'recentArticles'
-        ));
+    // ini yang wajib ada untuk memperbaiki error
+    $publishedArticles = Article::where('status', 'published')->count();
+
+    $recentArticles = Article::latest()->take(5)->get();
+
+    return view('admin.dashboard', compact(
+        'totalArticles',
+        'totalUsers',
+        'totalCategories',
+        'publishedArticles', // ← ini yang hilang!
+        'recentArticles'
+    ));
     }
 
     /**
