@@ -4,10 +4,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <h1 class="mt-4">Dashboard</h1>
-            <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item active">Dashboard</li>
-            </ol>
+            <h1 class="mt-4">HOME</h1>
         </div>
     </div>
 
@@ -16,85 +13,33 @@
     <div class="col-xl-3 col-md-6">
         <div class="card bg-primary text-white mb-4">
             <div class="card-body">
-                <h5>Total Articles</h5>
-                <h2>{{ $totalArticles }}</h2>
+                <h5>Genre</h5>
             </div>
         </div>
     </div>
     <div class="col-xl-3 col-md-6">
         <div class="card bg-success text-white mb-4">
             <div class="card-body">
-            <h5>Total Users</h5>
-            <h2>{{ $totalUsers }}</h2>
+            <h5>Favorites</h5>
             </div>
         </div>
     </div>
     <div class="col-xl-3 col-md-6">
         <div class="card bg-warning text-white mb-4">
             <div class="card-body">
-            <h5>Total Categories</h5>
-            <h2>{{ $totalCategories }}</h2>
+            <h5>Recomend For You</h5>
             </div>
         </div>
     </div>
     <div class="col-xl-3 col-md-6">
         <div class="card bg-danger text-white mb-4">
             <div class="card-body">
-            <h5>Published Articles</h5>
-            <h2>{{ $publishedArticles }}</h2>
+            <h5>Editor's Choice</h5>
             </div>
         </div>
     </div>
 </div>
 
 
-        <!-- copy block lainnya -->
-        <!-- ... -->
 
-    </div>
-
-    <!-- Recent Articles -->
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-table me-1"></i>
-                    Recent Articles
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Author</th>
-                                <th>Category</th>
-                                <th>Status</th>
-                                <th>Created At</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($recentArticles as $article)
-                            <tr>
-                                <td>{{ $article->title }}</td>
-                                <td>{{ $article->user->name ?? 'N/A' }}</td>
-                                <td>{{ $article->category->name ?? 'N/A' }}</td>
-                                <td>
-                                    <span class="badge bg-{{ $article->status == 'published' ? 'success' : ($article->status == 'draft' ? 'secondary' : 'warning') }}">
-                                        {{ ucfirst($article->status) }}
-                                    </span>
-                                </td>
-                                <td>{{ $article->created_at->format('d M Y') }}</td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="5" class="text-center">No articles found.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
