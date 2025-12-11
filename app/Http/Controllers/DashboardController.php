@@ -24,6 +24,7 @@ class DashboardController extends Controller
             'totalUsers',
             'totalCategories',
             'recentArticles'
+        ));
     }
 
     /**
