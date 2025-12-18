@@ -1,19 +1,45 @@
+@php
+    use Illuminate\Support\Str;
+@endphp
+
 @extends('layouts.medium')
 
 @section('content')
-<article>
-    <div>
-        <h2>Why Reading More Books Wasn’t Making Me Smarter</h2>
-        <p>I realized I had been reading wrong my entire life</p>
-    </div>
-    <img src="https://picsum.photos/200/120">
-</article>
+<div class="layout">
 
-<article>
-    <div>
-        <h2>I Passed The Bar Exam</h2>
-        <p>This is what I wish I knew before studying</p>
+    <!-- FEED KIRI -->
+    <div class="feed">
+        @foreach ($latest as $article)
+        <article class="article-item">
+            <div class="article-text">
+                <h2>{{ $article->title }}</h2>
+
+                <small class="text-muted">
+                    {{ $article->user->name ?? 'Admin' }} ·
+                    {{ $article->created_at->diffForHumans() }}
+                </small>
+
+                <p>{{ Str::limit($article->content, 120) }}</p>
+            </div>
+
+            <img src="https://picsum.photos/200/120?random={{ $loop->index }}">
+        </article>
+        @endforeach
     </div>
-    <img src="https://picsum.photos/201/120">
-</article>
+
+    <!-- SIDEBAR KANAN -->
+    <aside class="sidebar">
+        <h4>Staff Picks</h4>
+
+        @foreach ($editorChoice as $pick)
+            <div class="staff-pick">
+                <strong>{{ Str::limit($pick->title, 50) }}</strong>
+                <small class="text-muted d-block">
+                    {{ $pick->created_at->diffForHumans() }}
+                </small>
+            </div>
+        @endforeach
+    </aside>
+
+</div>
 @endsection

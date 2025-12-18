@@ -17,7 +17,7 @@
         /* NAVBAR ATAS */
         .top-navbar {
             width: 100%;
-            background: #ffffffff;
+            background: #0d6efd;
             padding: 15px 25px;
             display: flex;
             align-items: center;
@@ -31,7 +31,7 @@
         }
 
         .nav-links a {
-            color: #05c6fcff;
+            color: #fff;
             font-size: 15px;
             text-decoration: none;
             font-weight: 500;
@@ -46,9 +46,6 @@
             margin-top: 25px;
             padding: 25px;
         }
-        .title-admin {
-    color: #05c6fcff;!important;
-}
     </style>
 </head>
 
@@ -56,16 +53,13 @@
 
     <!-- NAVBAR ATAS -->
     <div class="top-navbar">
-
-<img src="{{ asset('assets-admin/images/logo.png') }}" 
-         alt="Logo" 
-         style="width:120px; height:auto; margin-right:10px;">
-
-        <h4 class="m-0 title-admin">RUANG ARTIKEL</h4>
+        <h4 class="m-0 ">Admin Panel</h4>
 
         <div class="nav-links">
-            <a href="#"><i class="fa fa-home"></i> Home</a>
-            <a href="#"><i class="fa fa-users"></i> Profile</a>
+            <a href="#"><i class="fa fa-home"></i> Dashboard</a>
+            <a href="#"><i class="fa fa-users"></i> Data User</a>
+            <a href="#"><i class="fa fa-list"></i> Kategori</a>
+            <a href="#"><i class="fa fa-cube"></i> Produk</a>
             <a href="#"><i class="fa fa-sign-out"></i> Logout</a>
         </div>
     </div>

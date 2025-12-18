@@ -3,19 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Category;
 
 class Article extends Model
 {
     protected $fillable = [
-        'category_id',
         'title',
         'content',
         'thumbnail',
-        'is_editor_choice'
+        'status',
+        'user_id'
     ];
 
-    public function category()
+    public function user()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(User::class);
     }
 }
+

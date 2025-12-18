@@ -1,45 +1,51 @@
-@extends('layouts.app')
+@php use Illuminate\Support\Str; @endphp
+
+@extends('layouts.admin')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <h1 class="mt-4">HOME</h1>
-        </div>
+
+<h1 class="mb-4">Dashboard</h1>
+
+<div class="row">
+
+    {{-- KIRI: FEED ARTIKEL --}}
+    <div class="col-md-8">
+
+        <h4 class="mb-3">For You</h4>
+
+        @forelse($recentArticles as $article)
+            <div class="mb-4 border-bottom pb-3">
+                <h5 class="fw-bold">{{ $article->title }}</h5>
+
+                <p class="text-muted mb-1">
+                    {{ Str::limit($article->content, 120) }}
+                </p>
+
+                <small class="text-muted">
+                    {{ $article->created_at->format('d M Y') }}
+                </small>
+            </div>
+        @empty
+            <p>No articles</p>
+        @endforelse
+
     </div>
 
-    <!-- Statistics Cards -->
-    <div class="row">
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-primary text-white mb-4">
-            <div class="card-body">
-                <h5>Genre</h5>
-            </div>
-        </div>
+    {{-- KANAN: SIDEBAR --}}
+    <div class="col-md-4">
+
+        <h5 class="mb-3">Editor’s Choice</h5>
+
+        <ul class="list-group">
+            @foreach($recentArticles->take(3) as $article)
+                <li class="list-group-item border-0 px-0">
+                    <strong>{{ $article->title }}</strong>
+                </li>
+            @endforeach
+        </ul>
+
     </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-success text-white mb-4">
-            <div class="card-body">
-            <h5>Favorites</h5>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-warning text-white mb-4">
-            <div class="card-body">
-            <h5>Recomend For You</h5>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-danger text-white mb-4">
-            <div class="card-body">
-            <h5>Editor's Choice</h5>
-            </div>
-        </div>
-    </div>
+
 </div>
-
-
 
 @endsection

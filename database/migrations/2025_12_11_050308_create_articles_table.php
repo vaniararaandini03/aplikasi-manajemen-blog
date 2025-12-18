@@ -14,14 +14,13 @@ return new class extends Migration
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('slug')->unique();
             $table->text('content');
-            $table->string('image')->nullable();
-            $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
+            $table->string('thumbnail')->nullable();
+            $table->enum('status', ['draft', 'published'])->default('draft');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
+
     }
 
     /**
