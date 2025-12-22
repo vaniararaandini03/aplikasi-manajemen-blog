@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
 
-        // REGISTER ALIAS MIDDLEWARE
+        // Alias middleware custom
         $middleware->alias([
             'role' => RoleMiddleware::class,
         ]);
