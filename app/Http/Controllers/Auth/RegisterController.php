@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Models\User; // Pastikan User model sudah ada
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+
+class RegisterController extends Controller
+{
+    // Menampilkan halaman form register
+    public function showRegistrationForm()
+    {
+        return view('auth.register'); // pastikan file ini ada di resources/views/auth/register.blade.php
+    }
+
+    // Proses simpan data register
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email', // unique di tabel users
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        Auth::login($user);
+
+        return redirect('/admin/dashboard'); // Atau ke halaman dashboard setelah register berhasil
+    }
+}

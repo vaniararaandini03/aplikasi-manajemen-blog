@@ -93,15 +93,46 @@
     <div id="overlay"></div>
 
     <!-- Sidebar -->
-    <aside id="sidebar">
-        <ul>
-            <li><a href="#" class="sidebar-link">🏠 Home</a></li>
-            <li><a href="#" class="sidebar-link">📚 Library</a></li>
-            <li><a href="#" class="sidebar-link">👤 Profile</a></li>
-            <li><a href="#" class="sidebar-link">✍️ Write</a></li>
-            <li><a href="#" class="sidebar-link">⚙️ Settings</a></li>
-        </ul>
-    </aside>
+   <aside id="sidebar">
+    <ul>
+        <li>
+            <a href="{{ route('admin.dashboard') }}" class="sidebar-link">
+                🏠 Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ route('admin.articles.index') }}" class="sidebar-link">
+                📝 Kelola Artikel
+            </a>
+        </li>
+
+        <li>
+            <a href="#" class="sidebar-link">
+                📂 Kategori
+            </a>
+        </li>
+
+        <li>
+            <a href="#" class="sidebar-link">
+                👥 Users
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ route('logout') }}"
+               class="sidebar-link"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                🚪 Logout
+            </a>
+
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                @csrf
+            </form>
+        </li>
+    </ul>
+</aside>
+
 
     <!-- Main Content -->
     <main class="container-fluid mt-4">
