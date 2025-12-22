@@ -27,23 +27,18 @@ class StaffArticleController extends Controller
         $request->validate([
             'title' => 'required|min:5',
             'content' => 'required',
-            'thumbnail' => 'nullable|image|max:2048'
+            'thumbnail' => 'nullable|string'
         ]);
 
-        $thumbnail = null;
-        if ($request->hasFile('thumbnail')) {
-            $thumbnail = $request->file('thumbnail')->store('thumbnails');
-        }
-
-        Article::create([
+        $article = Article::create([
             'title' => $request->title,
             'content' => $request->content,
-            'thumbnail' => $thumbnail,
+            'thumbnail' => $request->thumbnail,
             'status' => 'draft',
             'user_id' => Auth::id()
         ]);
 
-        return redirect()->route('staff.articles.index')
+        return redirect()->route('staff.articles.show', $article->id)
             ->with('success', 'Artikel berhasil dibuat');
     }
 

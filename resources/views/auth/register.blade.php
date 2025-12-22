@@ -32,6 +32,14 @@
                 <input type="password" name="password_confirmation" class="form-control" required>
             </div>
 
+            <div class="mb-3">
+                <label>Role</label>
+                <select name="role" class="form-control" required>
+                    <option value="staff" {{ old('role') == 'staff' ? 'selected' : '' }}>Staff</option>
+                    <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                </select>
+            </div>
+
             <button class="btn btn-primary w-100">Register</button>
 
             <div class="text-center mt-3">

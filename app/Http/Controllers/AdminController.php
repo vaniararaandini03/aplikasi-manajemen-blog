@@ -2,13 +2,25 @@
 
 namespace App\Http\Controllers;
 
-// Tambahkan di class AdminController
-
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Article;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
+    // Method untuk menampilkan dashboard admin
+    public function index()
+    {
+        $totalArticles = Article::count();
+        $publishedArticles = Article::where('status', 'published')->count();
+        $draftArticles = Article::where('status', 'draft')->count();
+        $totalUsers = User::count();
+        $articles = Article::latest()->take(6)->get();
+
+        return view('admin.dashboard', compact('totalArticles', 'publishedArticles', 'draftArticles', 'totalUsers', 'articles'));
+    }
+
     // Method untuk menampilkan form buat staff baru
     public function createStaff()
     {
@@ -32,5 +44,13 @@ class AdminController extends Controller
         ]);
 
         return redirect()->route('admin.dashboard')->with('success', 'Staff baru berhasil dibuat.');
+    }
+
+    // Method untuk menampilkan daftar users
+    public function users()
+    {
+        $users = User::latest()->paginate(10);
+
+        return view('admin.users.index', compact('users'));
     }
 }

@@ -20,9 +20,12 @@
     </div>
 
     <div class="mb-3">
-        <input type="file" name="thumbnail" class="form-control">
+        <label for="thumbnail" class="form-label">Thumbnail Image</label>
+        <input type="file" name="thumbnail" id="thumbnail" class="form-control"
+               accept="image/*">
+        <div class="form-text">Upload an image file for the article thumbnail</div>
     </div>
 
-    <button class="btn btn-dark">Save Draft</button>
+    <button type="submit" class="btn btn-dark">Save Draft</button>
 </form>
 @endsection

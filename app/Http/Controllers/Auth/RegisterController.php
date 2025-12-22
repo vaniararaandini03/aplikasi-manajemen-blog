@@ -22,14 +22,15 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
+            'role' => 'required|in:staff,admin',
         ]);
 
-        // Buat user baru (default role staff)
+        // Buat user baru dengan role yang dipilih
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'staff', // default role staff
+            'role' => $request->role,
         ]);
 
         // Setelah register, arahkan ke login
