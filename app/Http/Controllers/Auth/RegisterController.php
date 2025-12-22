@@ -3,37 +3,36 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User; // Pastikan User model sudah ada
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 
 class RegisterController extends Controller
 {
-    // Menampilkan halaman form register
+    // Tampilkan form register
     public function showRegistrationForm()
     {
-        return view('auth.register'); // pastikan file ini ada di resources/views/auth/register.blade.php
+        return view('auth.register'); // nanti di form ada field name, email, password
     }
 
-    // Proses simpan data register
+    // Proses register
     public function register(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email', // unique di tabel users
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        $user = User::create([
+        // Buat user baru (default role staff)
+        User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'staff', // default role staff
         ]);
 
-        Auth::login($user);
-
-        return redirect('/admin/dashboard'); // Atau ke halaman dashboard setelah register berhasil
+        // Setelah register, arahkan ke login
+        return redirect()->route('login')->with('success', 'Akun berhasil dibuat, silakan login.');
     }
 }

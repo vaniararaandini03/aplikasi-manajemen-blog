@@ -1,107 +1,72 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('content')
-<div class="container-fluid px-4">
+<div class="container py-5">
 
-    <h1 class="mt-4 fw-bold">Admin Dashboard</h1>
-    <p class="text-muted">Kelola seluruh konten dan aktivitas aplikasi</p>
+    <h2 class="mb-4">Dashboard Admin</h2>
 
-    <!-- STATISTIC -->
-    <div class="row mt-4">
+    {{-- Tombol Buat Staff Baru --}}
+    <div class="mb-4">
+        <a href="{{ route('admin.staff.create') }}" class="btn btn-primary">
+            + Buat Staff Baru
+        </a>
+    </div>
+
+    {{-- Statistik --}}
+    <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <small class="text-muted">Total Articles</small>
-                    <h3 class="fw-bold">{{ $totalArticles }}</h3>
-                </div>
+            <div class="card text-center bg-light p-3">
+                <h5>Total Artikel</h5>
+                <h3>{{ $totalArticles }}</h3>
             </div>
         </div>
-
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <small class="text-muted">Published</small>
-                    <h3 class="fw-bold text-success">{{ $publishedArticles }}</h3>
-                </div>
+            <div class="card text-center bg-success text-white p-3">
+                <h5>Published</h5>
+                <h3>{{ $publishedArticles }}</h3>
             </div>
         </div>
-
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <small class="text-muted">Draft</small>
-                    <h3 class="fw-bold text-warning">{{ $draftArticles }}</h3>
-                </div>
+            <div class="card text-center bg-warning text-dark p-3">
+                <h5>Draft</h5>
+                <h3>{{ $draftArticles }}</h3>
             </div>
         </div>
-
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <small class="text-muted">Users</small>
-                    <h3 class="fw-bold">{{ $totalUsers }}</h3>
-                </div>
+            <div class="card text-center bg-info text-white p-3">
+                <h5>Total Users</h5>
+                <h3>{{ $totalUsers }}</h3>
             </div>
         </div>
     </div>
 
-        <!-- ARTICLE LIST -->
-    <div class="card border-0 shadow-sm mt-5">
-        <div class="card-header bg-white fw-bold">
-            List Artikel
-        </div>
-
-        <div class="card-body">
-            <table class="table align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Judul</th>
-                        <th>Author</th>
-                        <th>Kategori</th>
-                        <th>Status</th>
-                        <th>Tanggal</th>
-                        <th class="text-end">Aksi</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                @foreach($articles as $article)
-                    <tr>
-                        <td class="fw-semibold">{{ $article->title }}</td>
-
-                        <td>{{ $article->user->name ?? 'Admin' }}</td>
-
-                        <td>
-                            <span class="badge bg-secondary">
-                                {{ $article->category->name ?? '-' }}
+    {{-- List Artikel Terbaru --}}
+    <h4 class="mb-3">Artikel Terbaru</h4>
+    <div class="row">
+        @forelse($articles as $article)
+            <div class="col-md-6 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ $article->title }}</h5>
+                        <p class="card-text text-truncate">{{ $article->content }}</p>
+                        <p class="mb-1"><small>Status:
+                            <span class="badge bg-{{ $article->status == 'published' ? 'success' : 'secondary' }}">
+                                {{ ucfirst($article->status) }}
                             </span>
-                        </td>
-
-                        <td>
-                            @if($article->status == 'published')
-                                <span class="badge bg-success">Published</span>
-                            @elseif($article->status == 'draft')
-                                <span class="badge bg-warning text-dark">Draft</span>
-                            @else
-                                <span class="badge bg-secondary">Pending</span>
-                            @endif
-                        </td>
-
-                        <td class="text-muted">
-                            {{ $article->created_at->format('d M Y') }}
-                        </td>
-
-                        <td class="text-end">
-                            <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
-                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-
-            </table>
-        </div>
+                        </small></p>
+                        <a href="{{ route('admin.articles.show', $article->id) }}" class="btn btn-sm btn-primary">Lihat</a>
+                        <a href="{{ route('admin.articles.edit', $article->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                        <form action="{{ route('admin.articles.destroy', $article->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-sm btn-danger" onclick="return confirm('Hapus artikel ini?')">Hapus</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <p class="text-muted">Belum ada artikel.</p>
+        @endforelse
     </div>
-
 </div>
 @endsection

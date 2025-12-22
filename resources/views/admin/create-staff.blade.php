@@ -1,19 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container d-flex justify-content-center align-items-center" style="min-height:100vh">
-    <div class="card p-4 shadow" style="width:400px">
-        <h4 class="text-center mb-3">Register</h4>
+<div class="container py-5">
+    <div class="card p-4 shadow" style="max-width: 500px; margin:auto;">
+        <h4 class="mb-3 text-center">Buat Akun Staff Baru</h4>
 
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
 
-        <form method="POST" action="{{ route('register') }}">
+        <form action="{{ route('admin.staff.store') }}" method="POST">
             @csrf
 
             <div class="mb-3">
-                <label>Name</label>
+                <label>Nama</label>
                 <input type="text" name="name" class="form-control" required value="{{ old('name') }}">
             </div>
 
@@ -28,15 +28,11 @@
             </div>
 
             <div class="mb-3">
-                <label>Confirm Password</label>
+                <label>Konfirmasi Password</label>
                 <input type="password" name="password_confirmation" class="form-control" required>
             </div>
 
-            <button class="btn btn-primary w-100">Register</button>
-
-            <div class="text-center mt-3">
-                <a href="{{ route('login') }}">Sudah punya akun? Login</a>
-            </div>
+            <button class="btn btn-success w-100">Buat Staff</button>
         </form>
     </div>
 </div>

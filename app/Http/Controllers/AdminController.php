@@ -2,79 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Article;
+// Tambahkan di class AdminController
+
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 class AdminController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    // Method untuk menampilkan form buat staff baru
+    public function createStaff()
     {
-         $totalArticles = Article::count();
-        $totalUsers = User::count();
-
-        $publishedArticles = Article::where('status', 'published')->count();
-        $draftArticles     = Article::where('status', 'draft')->count();
-
-        $articles = Article::latest()->take(10)->get();
-
-        return view('admin.dashboard', compact(
-            'totalArticles',
-            'totalUsers',
-            'publishedArticles',
-            'draftArticles',
-            'articles'
-        ));
+        return view('admin.create-staff');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // Method untuk menyimpan staff baru
+    public function storeStaff(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'staff', // role staff
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('admin.dashboard')->with('success', 'Staff baru berhasil dibuat.');
     }
 }
