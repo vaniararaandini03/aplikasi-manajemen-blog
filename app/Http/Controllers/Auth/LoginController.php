@@ -44,4 +44,15 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
         return redirect()->route('login');
     }
+
+    protected function authenticated(Request $request, $user)
+{
+    if ($user->role === 'admin') {
+        return redirect('/admin/dashboard');
+    } elseif ($user->role === 'staff') {
+        return redirect('/staff/dashboard');
+    }
+
+    return redirect('/');
+}
 }
