@@ -5,13 +5,11 @@
     <title>@yield('title', 'Admin – Ruang Artikel')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Font ala Medium -->
+    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -88,7 +86,6 @@
             color: #000;
         }
 
-        /* ACTIVE ala Medium */
         .sidebar a.active {
             background: #e8f3ff;
             color: #1a73e8;
@@ -102,6 +99,32 @@
             padding: 40px 32px;
             max-width: 900px;
         }
+        .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 24px;
+}
+
+.card {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 20px;
+    background: #fff;
+}
+
+.card h4 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+.card .number {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000;
+}
+
     </style>
 </head>
 <body>
@@ -130,7 +153,8 @@
         ✍️ Artikel
     </a>
 
-    <a href="#" class="{{ Route::is('admin.categories.*') ? 'active' : '' }}">
+    <a href="{{ route('admin.categories.index') }}"
+       class="{{ Route::is('admin.categories.*') ? 'active' : '' }}">
         📂 Kategori
     </a>
 
