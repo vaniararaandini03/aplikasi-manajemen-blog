@@ -7,6 +7,23 @@
 @section('title', 'Home')
 
 @section('content')
+<div class="row mb-4">
+    <div class="col-12">
+        <form method="GET" action="{{ route('guest.search') }}" class="d-flex">
+            <input type="text" name="q" class="form-control me-2" placeholder="Cari artikel..." value="{{ $query ?? '' }}">
+            <button class="btn btn-primary" type="submit">Cari</button>
+        </form>
+    </div>
+</div>
+
+@if(isset($query))
+<div class="row mb-3">
+    <div class="col-12">
+        <p class="text-muted">Hasil pencarian untuk: <strong>"{{ $query }}"</strong></p>
+    </div>
+</div>
+@endif
+
 <div class="row">
 
     {{-- Main content --}}

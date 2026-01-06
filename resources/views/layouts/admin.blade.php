@@ -2,32 +2,148 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard - Ruang Artikel</title>
+    <title>@yield('title', 'Admin – Ruang Artikel')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font ala Medium -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: #fff;
+            color: #242424;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.4rem;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        header a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .btn-logout {
+            background: none;
+            border: none;
+            color: #555;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover {
+            color: #000;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            width: 220px;
+            height: calc(100vh - 64px);
+            border-right: 1px solid #eee;
+            padding: 24px 16px;
+            background: #fff;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 10px 12px;
+            margin-bottom: 6px;
+            text-decoration: none;
+            color: #6b6b6b;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: #f2f2f2;
+            color: #000;
+        }
+
+        /* ACTIVE ala Medium */
+        .sidebar a.active {
+            background: #e8f3ff;
+            color: #1a73e8;
+            font-weight: 600;
+        }
+
+        /* ===== CONTENT ===== */
+        main {
+            margin-top: 64px;
+            margin-left: 220px;
+            padding: 40px 32px;
+            max-width: 900px;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="{{ route('admin.dashboard') }}">
-            Admin Panel
-        </a>
+<!-- HEADER -->
+<header>
+    <h1>
+        <a href="{{ route('admin.dashboard') }}">Ruang Artikel</a>
+    </h1>
 
-        <div class="ms-auto">
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button class="btn btn-outline-light btn-sm">Logout</button>
-            </form>
-        </div>
-    </div>
-</nav>
+    <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button class="btn-logout">Logout</button>
+    </form>
+</header>
 
-<div class="container my-4">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <a href="{{ route('admin.dashboard') }}"
+       class="{{ Route::is('admin.dashboard') ? 'active' : '' }}">
+        🏠 Dashboard
+    </a>
+
+    <a href="{{ route('admin.articles.index') }}"
+       class="{{ Route::is('admin.articles.*') ? 'active' : '' }}">
+        ✍️ Artikel
+    </a>
+
+    <a href="#" class="{{ Route::is('admin.categories.*') ? 'active' : '' }}">
+        📂 Kategori
+    </a>
+
+    <a href="{{ route('admin.users.index') }}"
+       class="{{ Route::is('admin.users.*') ? 'active' : '' }}">
+        👥 Users
+    </a>
+</aside>
+
+<!-- CONTENT -->
+<main>
     @yield('content')
-</div>
+</main>
 
 </body>
 </html>

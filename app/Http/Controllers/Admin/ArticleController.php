@@ -11,7 +11,7 @@ class ArticleController extends Controller
 {
     public function index()
     {
-        $articles = Article::with('category')->latest()->get();
+        $articles = Article::latest()->paginate(6);
         return view('admin.articles.index', compact('articles'));
     }
 
@@ -33,4 +33,9 @@ class ArticleController extends Controller
         $article->delete();
         return back()->with('success', 'Artikel dihapus');
     }
+    public function create()
+{
+    return view('admin.articles.create');
+}
+
 }

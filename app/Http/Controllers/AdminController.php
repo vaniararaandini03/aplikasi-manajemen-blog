@@ -18,7 +18,9 @@ class AdminController extends Controller
         $totalUsers = User::count();
         $articles = Article::latest()->take(6)->get();
 
-        return view('admin.dashboard', compact('totalArticles', 'publishedArticles', 'draftArticles', 'totalUsers', 'articles'));
+        return view('home', [
+        'articles' => Article::latest()->get()
+    ]);
     }
 
     // Method untuk menampilkan form buat staff baru

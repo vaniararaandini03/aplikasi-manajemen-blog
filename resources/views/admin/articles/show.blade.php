@@ -1,4 +1,4 @@
-@extends('layouts.medium')
+@extends('layouts.admin')
 
 @section('title', $article->title)
 

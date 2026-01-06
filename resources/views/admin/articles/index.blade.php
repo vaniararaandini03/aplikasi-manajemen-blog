@@ -1,15 +1,17 @@
-@extends('layouts.medium')
+@extends('layouts.admin')
 
 @section('title', 'Daftar Artikel')
 
 @section('content')
-    <a href="{{ route(request()->route()->getPrefix() . '.articles.create') }}" class="btn" style="margin-bottom:20px;">+ Buat Artikel Baru</a>
+    <a href="{{ route('admin.articles.create') }}" class="btn">+ Buat Artikel Baru</a>
 
     @forelse($articles as $article)
         <article>
-            <h2><a href="{{ route(request()->route()->getPrefix() . '.articles.show', $article->id) }}" style="color:#00ab6b; text-decoration:none;">
-                {{ $article->title }}
-            </a></h2>
+            <h2>
+    <a href="{{ route('admin.articles.show', $article->id) }}">
+        {{ $article->title }}
+    </a></h2>
+
 
             <p class="excerpt">{{ Str::limit(strip_tags($article->content), 150) }}</p>
 

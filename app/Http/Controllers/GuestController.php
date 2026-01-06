@@ -44,4 +44,24 @@ class GuestController extends Controller
 
         return view('guest.home', compact('articles', 'categories'));
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->get('q');
+
+        $articles = Article::where('status', 'published')
+            ->where(function($q) use ($query) {
+                $q->where('title', 'like', "%{$query}%")
+                  ->orWhere('content', 'like', "%{$query}%");
+            })
+            ->with(['category', 'author'])
+            ->latest()
+            ->paginate(12);
+
+        $categories = Category::withCount(['articles' => function($query) {
+            $query->where('status', 'published');
+        }])->get();
+
+        return view('guest.home', compact('articles', 'categories', 'query'));
+    }
 }

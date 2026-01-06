@@ -1,16 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 <div class="container py-5">
 
     <h2 class="mb-4">Dashboard Admin</h2>
-
-    {{-- Tombol Buat Staff Baru --}}
-    <div class="mb-4">
-        <a href="{{ route('admin.staff.create') }}" class="btn btn-primary">
-            + Buat Staff Baru
-        </a>
-    </div>
 
     {{-- Statistik --}}
     <div class="row mb-4">

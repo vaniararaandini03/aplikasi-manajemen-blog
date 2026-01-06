@@ -1,129 +1,143 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8" />
-    <title>@yield('title', 'Ruang Artikel')</title>
+    <title>@yield('title', 'Admin – Ruang Artikel')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Google Fonts Mirip Medium -->
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Open+Sans&display=swap" rel="stylesheet" />
+    <!-- Font ala Medium -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            font-family: 'Merriweather', serif;
-            margin: 0;
-            background: #f6f6ef;
-            color: #333;
-            line-height: 1.6;
+        * {
+            box-sizing: border-box;
         }
 
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: #fff;
+            color: #242424;
+        }
+
+        /* ===== HEADER ===== */
         header {
-            background: white;
-            padding: 15px 30px;
-            border-bottom: 1px solid #ddd;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
         }
 
         header h1 {
             font-family: 'Merriweather', serif;
-            font-weight: 700;
-            font-size: 1.8rem;
+            font-size: 1.4rem;
             margin: 0;
-            color: #000;
+            font-weight: 700;
         }
 
-        nav a {
+        header h1 a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            width: 220px;
+            height: calc(100vh - 64px);
+            border-right: 1px solid #eee;
+            padding: 24px 16px;
+            background: #fff;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 10px 12px;
+            margin-bottom: 6px;
             text-decoration: none;
             color: #555;
-            margin-left: 20px;
-            font-weight: 600;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
         }
 
-        nav a:hover {
+        .sidebar a:hover {
+            background: #f2f2f2;
             color: #000;
         }
 
-        main {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-            background: white;
-            box-shadow: 0 0 8px rgba(0,0,0,0.1);
-            border-radius: 8px;
-        }
-
-        article {
-            margin-bottom: 40px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 30px;
-        }
-
-        article:last-child {
-            border: none;
-            margin-bottom: 0;
-        }
-
-        article h2 {
-            font-weight: 700;
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        article p.excerpt {
-            font-family: 'Open Sans', sans-serif;
-            font-weight: 300;
-            font-size: 1rem;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        article .meta {
-            font-size: 0.9rem;
-            color: #999;
-        }
-
-        .btn {
-            background: #00ab6b;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
+        /* ===== ACTIVE (MEDIUM STYLE) ===== */
+        .sidebar a.active {
+            background: #f2f2f2;
+            color: #000;
             font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
         }
 
-        .btn:hover {
-            background: #008a54;
+        /* ===== MAIN CONTENT ===== */
+        main {
+            margin-top: 64px;
+            margin-left: 220px;
+            padding: 40px 32px;
+            max-width: 900px;
+        }
+
+        .btn-logout {
+            background: none;
+            border: none;
+            color: #555;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover {
+            color: #000;
         }
     </style>
 
     @stack('styles')
 </head>
 <body>
-    <header>
-        <h1><a href="{{ url('/') }}" style="color: inherit; text-decoration:none;">Ruang Artikel</a></h1>
-        <nav>
-            @guest
-                <a href="{{ route('login') }}">Login</a>
-                <a href="{{ route('register') }}">Register</a>
-            @else
-                <span>Hi, {{ auth()->user()->name }}!</span>
-                <form method="POST" action="{{ route('logout') }}" style="display:inline;">
-                    @csrf
-                    <button type="submit" class="btn" style="background:#e0245e;">Logout</button>
-                </form>
-            @endguest
-        </nav>
-    </header>
 
-    <main>
-        @yield('content')
-    </main>
+<!-- HEADER -->
+<header>
+    <h1>
+        <a href="{{ route('admin.dashboard') }}">Ruang Artikel</a>
+    </h1>
 
-    @stack('scripts')
+    <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button class="btn-logout">Logout</button>
+    </form>
+</header>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <a href="{{ route('admin.dashboard') }}"
+       class="{{ Route::is('admin.dashboard') ? 'active' : '' }}">
+        🏠 Dashboard
+    </a>
+
+    <a href="{{ route('admin.articles.index') }}"
+       class="{{ Route::is('admin.articles.*') ? 'active' : '' }}">
+        ✍️ Artikel
+    </a>
+</aside>
+
+<!-- CONTENT -->
+<main>
+    @yield('content')
+</main>
+
+@stack('scripts')
 </body>
 </html>
