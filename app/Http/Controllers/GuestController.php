@@ -15,52 +15,55 @@ class GuestController extends Controller
             ->latest()
             ->paginate(12);
 
-        $categories = Category::withCount(['articles' => function($query) {
-            $query->where('status', 'published');
-        }])->get();
+        $categories = Category::withCount([
+            'articles' => fn ($q) => $q->where('status', 'published')
+        ])->get();
 
         return view('guest.home', compact('articles', 'categories'));
     }
 
     public function showArticle(Article $article)
     {
-        if ($article->status !== 'published') {
-            abort(404);
-        }
-
+        abort_if($article->status !== 'published', 404);
         return view('guest.article-show', compact('article'));
     }
 
+    // ✅ INI YANG BENAR UNTUK KATEGORI
     public function articlesByCategory(Category $category)
     {
         $articles = $category->articles()
             ->where('status', 'published')
+            ->with(['author'])
             ->latest()
             ->paginate(12);
 
-        $categories = Category::withCount(['articles' => function($query) {
-            $query->where('status', 'published');
-        }])->get();
+        $categories = Category::withCount([
+            'articles' => fn ($q) => $q->where('status', 'published')
+        ])->get();
 
-        return view('guest.home', compact('articles', 'categories'));
+        return view('guest.category', compact(
+            'category',
+            'articles',
+            'categories'
+        ));
     }
 
     public function search(Request $request)
     {
-        $query = $request->get('q');
+        $query = $request->q;
 
         $articles = Article::where('status', 'published')
-            ->where(function($q) use ($query) {
-                $q->where('title', 'like', "%{$query}%")
-                  ->orWhere('content', 'like', "%{$query}%");
-            })
+            ->where(fn ($q) =>
+                $q->where('title', 'like', "%$query%")
+                  ->orWhere('content', 'like', "%$query%")
+            )
             ->with(['category', 'author'])
             ->latest()
             ->paginate(12);
 
-        $categories = Category::withCount(['articles' => function($query) {
-            $query->where('status', 'published');
-        }])->get();
+        $categories = Category::withCount([
+            'articles' => fn ($q) => $q->where('status', 'published')
+        ])->get();
 
         return view('guest.home', compact('articles', 'categories', 'query'));
     }

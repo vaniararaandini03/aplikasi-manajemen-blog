@@ -8,18 +8,22 @@ use App\Models\User;
 class DashboardController extends Controller
 {
     public function index()
-{
-    return view('admin.dashboard', [
+    {
         // Statistik
-        'totalArticles'     => Article::count(),
-        'publishedArticles' => Article::where('status', 'published')->count(),
-        'draftArticles'     => Article::where('status', 'draft')->count(),
-        'totalUsers'        => User::count(),
+        $totalArticles = Article::count();
+        $published     = Article::where('status', 'published')->count();
+        $draft         = Article::where('status', 'draft')->count();
+        $totalUsers    = User::count();
 
-        // List artikel
-        'articles'     => Article::latest()->take(6)->get(),
-        'editorChoice' => Article::latest()->take(5)->get(),
-    ]);
-}
+        // Artikel terbaru (untuk dashboard)
+        $latestArticles = Article::latest()->take(5)->get();
 
+        return view('admin.dashboard', compact(
+            'totalArticles',
+            'published',
+            'draft',
+            'totalUsers',
+            'latestArticles'
+        ));
+    }
 }

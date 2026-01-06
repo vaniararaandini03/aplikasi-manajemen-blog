@@ -2,25 +2,29 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Article extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
+    'user_id',
     'title',
+    'category_id',
     'content',
-    'thumbnail',
     'status',
-    'user_id'
 ];
-    public function author()
+
+public function author()
 {
     return $this->belongsTo(User::class, 'user_id');
 }
 
 public function category()
 {
-    return $this->belongsTo(Category::class, 'category_id');
+    return $this->belongsTo(Category::class);
 }
 
 }
