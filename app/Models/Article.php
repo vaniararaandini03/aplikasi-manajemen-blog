@@ -6,8 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Article extends Model
 {
-    protected $fillable = ['title', 'content', 'status', 'category_id'];
-
+    protected $fillable = [
+    'title',
+    'content',
+    'thumbnail',
+    'status',
+    'user_id'
+];
     public function author()
 {
     return $this->belongsTo(User::class, 'user_id');
