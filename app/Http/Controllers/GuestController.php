@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Article;
 use App\Models\Category;
+use Illuminate\Support\Facades\Auth;
 
 class GuestController extends Controller
 {
@@ -22,15 +23,25 @@ class GuestController extends Controller
         return view('guest.home', compact('articles', 'categories'));
     }
 
+    // 🔥 ARTIKEL WAJIB LOGIN
     public function showArticle(Article $article)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
         abort_if($article->status !== 'published', 404);
+
         return view('guest.article-show', compact('article'));
     }
 
-    // ✅ INI YANG BENAR UNTUK KATEGORI
+    // 🔥 KATEGORI WAJIB LOGIN
     public function articlesByCategory(Category $category)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
         $articles = $category->articles()
             ->where('status', 'published')
             ->with(['author'])

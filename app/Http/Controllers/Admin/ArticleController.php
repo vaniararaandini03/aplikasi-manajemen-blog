@@ -14,7 +14,7 @@ class ArticleController extends Controller
     {
         $articles = Article::with('category')
             ->latest()
-            ->paginate(6);
+            ->simplepaginate(6);
 
         return view('admin.articles.index', compact('articles'));
     }

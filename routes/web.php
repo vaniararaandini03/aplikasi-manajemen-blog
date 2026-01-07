@@ -16,9 +16,21 @@ use App\Http\Controllers\Admin\CategoryController;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [GuestController::class, 'home'])->name('home');
-Route::get('/articles/{article}', [GuestController::class, 'showArticle'])->name('guest.article.show');
-Route::get('/category/{category}', [GuestController::class, 'articlesByCategory'])->name('guest.category.articles');
 Route::get('/search', [GuestController::class, 'search'])->name('guest.search');
+
+/*
+|--------------------------------------------------------------------------
+| PROTECTED GUEST FEATURES (WAJIB LOGIN)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+
+    Route::get('/articles/{article}', [GuestController::class, 'showArticle'])
+        ->name('guest.article.show');
+
+    Route::get('/category/{category}', [GuestController::class, 'articlesByCategory'])
+        ->name('guest.category.articles');
+});
 
 /*
 |--------------------------------------------------------------------------
