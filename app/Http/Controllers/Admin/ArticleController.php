@@ -31,13 +31,22 @@ class ArticleController extends Controller
             'title'       => 'required|string|max:255',
             'author'      => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'content'     => 'required',
-        ], [
-            'title.required'       => 'Judul artikel wajib diisi',
-            'author.required'      => 'Nama penulis wajib diisi',
-            'category_id.required' => 'Kategori wajib dipilih',
-            'content.required'     => 'Isi artikel wajib diisi',
+            'content'     => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if (str_word_count(strip_tags($value)) < 100) {
+                        $fail('Isi artikel minimal 100 kata');
+                    }
+                }
+            ],
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        // Upload gambar jika ada
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('articles', 'public');
+        }
 
         Article::create([
             'user_id'     => Auth::id(),
@@ -45,6 +54,7 @@ class ArticleController extends Controller
             'author'      => $request->author,
             'category_id' => $request->category_id,
             'content'     => $request->content,
+            'image'       => $imagePath,
             'status'      => 'published',
         ]);
 
@@ -65,8 +75,15 @@ class ArticleController extends Controller
             'title'       => 'required|string|max:255',
             'author'      => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'content'     => 'required',
-            'status'      => 'required|in:draft,published',
+            'content'     => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if (str_word_count(strip_tags($value)) < 100) {
+                        $fail('Isi artikel minimal 100 kata');
+                    }
+                }
+            ],
+            'status' => 'required|in:draft,published',
         ]);
 
         $article->update($request->only(
