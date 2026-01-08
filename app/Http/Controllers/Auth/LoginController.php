@@ -46,13 +46,13 @@ class LoginController extends Controller
     }
 
     protected function authenticated(Request $request, $user)
-{
-    if ($user->role === 'admin') {
-        return redirect('/admin/dashboard');
-    } elseif ($user->role === 'staff') {
-        return redirect('/staff/dashboard');
+    {
+        if ($user->role === 'admin') {
+            return redirect('/admin/dashboard');
+        } elseif ($user->role === 'staff') {
+            return redirect('/staff/dashboard');
+        }
+        
+        return redirect('/');
     }
-
-    return redirect('/');
-}
 }
