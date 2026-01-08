@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,42 +18,46 @@ class LoginController extends Controller
     // Proses login
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required','email'],
+        // Validasi input
+        $request->validate([
+            'email'    => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-
-            // Redirect sesuai role
-            return match(auth()->user()?->role) {
-                'admin' => redirect()->route('admin.dashboard'),
-                'staff' => redirect()->route('staff.articles.index'),
-                default => redirect()->route('login')->withErrors(['email'=>'Role tidak dikenali']),
-            };
+        // Cek apakah akun terdaftar
+        if (!User::where('email', $request->email)->exists()) {
+            return back()
+                ->withErrors(['email' => 'Akun belum terdaftar'])
+                ->withInput();
         }
 
-        return back()->withErrors(['email'=>'Email atau password salah'])->withInput();
+        // Cek password
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return back()
+                ->withErrors(['password' => 'Password yang Anda masukkan salah'])
+                ->withInput();
+        }
+
+        // Login berhasil
+        $request->session()->regenerate();
+
+        // Redirect sesuai role
+        return match (auth()->user()->role) {
+            'admin' => redirect()->route('admin.dashboard'),
+            'staff' => redirect()->route('staff.articles.index'),
+            default => redirect()->route('login')
+                ->withErrors(['email' => 'Role tidak dikenali']),
+        };
     }
 
     // Logout
     public function logout(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('login');
-    }
 
-    protected function authenticated(Request $request, $user)
-    {
-        if ($user->role === 'admin') {
-            return redirect('/admin/dashboard');
-        } elseif ($user->role === 'staff') {
-            return redirect('/staff/dashboard');
-        }
-        
-        return redirect('/');
+        return redirect()->route('login');
     }
 }
