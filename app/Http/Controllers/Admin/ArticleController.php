@@ -14,7 +14,7 @@ class ArticleController extends Controller
     {
         $articles = Article::with('category')
             ->latest()
-            ->simplepaginate(6);
+            ->simplePaginate(6);
 
         return view('admin.articles.index', compact('articles'));
     }
@@ -26,30 +26,31 @@ class ArticleController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'title'       => 'required|string|max:255',
-        'content'     => 'required',
-        'category_id' => 'required|exists:categories,id',
-    ]);
-
-    Article::create([
-        'user_id'     => Auth::id(),
-        'title'       => $request->title,
-        'category_id' => $request->category_id,
-        'content'     => $request->content,
-        'status'      => 'published',
-    ]);
-
-    return redirect()
-        ->route('admin.articles.index')
-        ->with('success', 'Artikel berhasil ditambahkan');
-}
-
-
-    public function show(Article $article)
     {
-        return view('admin.articles.show', compact('article'));
+        $request->validate([
+            'title'       => 'required|string|max:255',
+            'author'      => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'content'     => 'required',
+        ], [
+            'title.required'       => 'Judul artikel wajib diisi',
+            'author.required'      => 'Nama penulis wajib diisi',
+            'category_id.required' => 'Kategori wajib dipilih',
+            'content.required'     => 'Isi artikel wajib diisi',
+        ]);
+
+        Article::create([
+            'user_id'     => Auth::id(),
+            'title'       => $request->title,
+            'author'      => $request->author,
+            'category_id' => $request->category_id,
+            'content'     => $request->content,
+            'status'      => 'published',
+        ]);
+
+        return redirect()
+            ->route('admin.articles.index')
+            ->with('success', 'Artikel berhasil ditambahkan');
     }
 
     public function edit(Article $article)
@@ -63,22 +64,18 @@ class ArticleController extends Controller
         $request->validate([
             'title'       => 'required|string|max:255',
             'author'      => 'required|string|max:255',
-            'content'     => 'required',
             'category_id' => 'required|exists:categories,id',
+            'content'     => 'required',
             'status'      => 'required|in:draft,published',
         ]);
 
-        $article->update([
-            'title'       => $request->title,
-            'author'      => $request->author,
-            'content'     => $request->content,
-            'category_id' => $request->category_id,
-            'status'      => $request->status,
-        ]);
+        $article->update($request->only(
+            'title','author','category_id','content','status'
+        ));
 
         return redirect()
             ->route('admin.articles.index')
-            ->with('success', 'Artikel berhasil diupdate');
+            ->with('success', 'Artikel berhasil diperbarui');
     }
 
     public function destroy(Article $article)
