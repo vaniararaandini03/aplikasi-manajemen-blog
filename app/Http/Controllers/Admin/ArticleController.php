@@ -10,39 +10,34 @@ use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
+    // LIST ARTIKEL
     public function index()
     {
         $articles = Article::with('category')
             ->latest()
-            ->simplePaginate(6);
+            ->paginate(6);
 
         return view('admin.articles.index', compact('articles'));
     }
 
+    // FORM TAMBAH
     public function create()
     {
         $categories = Category::all();
         return view('admin.articles.create', compact('categories'));
     }
 
+    // SIMPAN
     public function store(Request $request)
     {
         $request->validate([
             'title'       => 'required|string|max:255',
             'author'      => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'content'     => [
-                'required',
-                function ($attribute, $value, $fail) {
-                    if (str_word_count(strip_tags($value)) < 100) {
-                        $fail('Isi artikel minimal 100 kata');
-                    }
-                }
-            ],
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'content'     => 'required|min:100',
+            'image'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Upload gambar jika ada
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('articles', 'public');
@@ -63,31 +58,36 @@ class ArticleController extends Controller
             ->with('success', 'Artikel berhasil ditambahkan');
     }
 
+    // ✅ DETAIL (INI YANG SEBELUMNYA BIKIN ERROR)
+    public function show(Article $article)
+    {
+        return view('admin.articles.show', compact('article'));
+    }
+
+    // FORM EDIT
     public function edit(Article $article)
     {
         $categories = Category::all();
         return view('admin.articles.edit', compact('article', 'categories'));
     }
 
+    // UPDATE
     public function update(Request $request, Article $article)
     {
         $request->validate([
             'title'       => 'required|string|max:255',
             'author'      => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'content'     => [
-                'required',
-                function ($attribute, $value, $fail) {
-                    if (str_word_count(strip_tags($value)) < 100) {
-                        $fail('Isi artikel minimal 100 kata');
-                    }
-                }
-            ],
-            'status' => 'required|in:draft,published',
+            'content'     => 'required|min:100',
+            'status'      => 'required|in:draft,published',
         ]);
 
         $article->update($request->only(
-            'title','author','category_id','content','status'
+            'title',
+            'author',
+            'category_id',
+            'content',
+            'status'
         ));
 
         return redirect()
@@ -95,6 +95,7 @@ class ArticleController extends Controller
             ->with('success', 'Artikel berhasil diperbarui');
     }
 
+    // HAPUS
     public function destroy(Article $article)
     {
         $article->delete();
