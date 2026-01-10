@@ -43,7 +43,7 @@ class StaffArticleController extends Controller
             'author'      => $request->author,
             'category_id' => $request->category_id,
             'content'     => $request->content,
-            'status'      => 'draft', // 🔥 staff default draft
+            'status'      => 'draft',
         ]);
 
         return redirect()
