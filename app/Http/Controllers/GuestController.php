@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Article;
 use App\Models\Category;
-use Illuminate\Support\Facades\Auth;
 
 class GuestController extends Controller
 {
+    // HOME (BOLEH DIAKSES TANPA LOGIN)
     public function home()
     {
         $articles = Article::where('status', 'published')
@@ -23,25 +23,19 @@ class GuestController extends Controller
         return view('guest.home', compact('articles', 'categories'));
     }
 
-    // 🔥 ARTIKEL WAJIB LOGIN
+    // BACA ARTIKEL (WAJIB LOGIN - DIATUR DI ROUTE)
     public function showArticle(Article $article)
     {
-        if (!Auth::check()) {
-            return redirect()->route('login');
-        }
-
         abort_if($article->status !== 'published', 404);
+
+        $article->load(['category', 'author']);
 
         return view('guest.article-show', compact('article'));
     }
 
-    // 🔥 KATEGORI WAJIB LOGIN
+    // ARTIKEL PER KATEGORI (WAJIB LOGIN - DIATUR DI ROUTE)
     public function articlesByCategory(Category $category)
     {
-        if (!Auth::check()) {
-            return redirect()->route('login');
-        }
-
         $articles = $category->articles()
             ->where('status', 'published')
             ->with(['author'])
@@ -59,6 +53,7 @@ class GuestController extends Controller
         ));
     }
 
+    // SEARCH (BOLEH TANPA LOGIN)
     public function search(Request $request)
     {
         $query = $request->q;

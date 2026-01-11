@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\CategoryController;
 /*
 |--------------------------------------------------------------------------
 | PUBLIC / GUEST ROUTES
+| Boleh diakses TANPA login (HANYA LIST & SEARCH)
 |--------------------------------------------------------------------------
 */
 Route::get('/', [GuestController::class, 'home'])->name('home');
@@ -20,7 +21,8 @@ Route::get('/search', [GuestController::class, 'search'])->name('guest.search');
 
 /*
 |--------------------------------------------------------------------------
-| PROTECTED GUEST FEATURES (WAJIB LOGIN)
+| GUEST ROUTES - WAJIB LOGIN
+| BACA ISI ARTIKEL & FILTER KATEGORI
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
@@ -60,11 +62,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/staff/create', [AdminController::class, 'createStaff'])->name('staff.create');
         Route::post('/staff/store', [AdminController::class, 'storeStaff'])->name('staff.store');
 
-        /*
-        |--------------------------------------------------------------------------
-        | ARTICLE MANAGEMENT
-        |--------------------------------------------------------------------------
-        */
+        // ARTICLE MANAGEMENT
         Route::prefix('articles')->name('articles.')->group(function () {
             Route::get('/', [ArticleController::class, 'index'])->name('index');
             Route::get('/create', [ArticleController::class, 'create'])->name('create');
@@ -75,19 +73,12 @@ Route::middleware(['auth', 'role:admin'])
             Route::delete('/{article}', [ArticleController::class, 'destroy'])->name('destroy');
         });
 
-        /*
-        |--------------------------------------------------------------------------
-        | CATEGORY MANAGEMENT (✔ ADA SHOW)
-        |--------------------------------------------------------------------------
-        */
+        // CATEGORY MANAGEMENT
         Route::prefix('categories')->name('categories.')->group(function () {
             Route::get('/', [CategoryController::class, 'index'])->name('index');
             Route::get('/create', [CategoryController::class, 'create'])->name('create');
             Route::post('/', [CategoryController::class, 'store'])->name('store');
-
-            // ✅ INI YANG WAJIB UNTUK KLIK KATEGORI
             Route::get('/{category}', [CategoryController::class, 'show'])->name('show');
-
             Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('edit');
             Route::put('/{category}', [CategoryController::class, 'update'])->name('update');
             Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy');

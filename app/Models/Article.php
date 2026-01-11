@@ -2,29 +2,31 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\Category;
 
 class Article extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-    'user_id',
-    'title',
-    'category_id',
-    'content',
-    'status',
-];
+        'user_id',
+        'category_id',
+        'title',
+        'content',
+        'image',
+        'status',
+        'is_editor_choice',
+    ];
 
-public function author()
-{
-    return $this->belongsTo(User::class, 'user_id');
-}
+    // RELASI KE USER (PENULIS)
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
-public function category()
-{
-    return $this->belongsTo(Category::class);
-}
-
+    // RELASI KE CATEGORY
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }
