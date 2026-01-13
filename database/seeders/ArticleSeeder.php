@@ -3,15 +3,12 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Article;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Category;
 
 class ArticleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $user = User::first();
@@ -21,8 +18,15 @@ class ArticleSeeder extends Seeder
             return;
         }
 
-        Article::create([
-            //
+        DB::table('articles')->insert([
+            'title' => 'Artikel Pertama',
+            'content' => 'Ini adalah contoh isi artikel yang dibuat melalui database seeder Laravel.',
+            'category_id' => $category->id,
+            'user_id' => $user->id,
+            'status' => 'published',
+            'is_editor_choice' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 }

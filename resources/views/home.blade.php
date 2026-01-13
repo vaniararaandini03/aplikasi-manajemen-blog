@@ -1,48 +1,93 @@
-@php
-    use Illuminate\Support\Str;
-@endphp
+<?php
 
-@extends('layouts.medium')
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GuestController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\StaffArticleController;
+use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\StaffCategoryController;
+use App\Http\Controllers\StaffUserController;
 
-@section('title', 'Dashboard Admin')
+/*
+|--------------------------------------------------------------------------
+| PUBLIC / GUEST ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::get('/', [GuestController::class, 'home'])->name('home');
+Route::get('/search', [GuestController::class, 'search'])->name('guest.search');
 
-@section('content')
-<div class="row">
+/*
+|--------------------------------------------------------------------------
+| GUEST ROUTES (LOGIN REQUIRED)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
 
-    <!-- FEED KIRI -->
-    <div class="col-md-8">
-        @foreach ($latest as $article)
-        <article class="d-flex mb-4 border-bottom pb-3">
-            <div class="me-3">
-                <h4 class="fw-bold">{{ $article->title }}</h4>
+    Route::get('/articles/{article}', [GuestController::class, 'showArticle'])
+        ->name('guest.article.show');
 
-                <small class="text-muted">
-                    {{ $article->user->name ?? 'Admin' }} ·
-                    {{ $article->created_at->diffForHumans() }}
-                </small>
+    Route::get('/category/{category}', [GuestController::class, 'articlesByCategory'])
+        ->name('guest.category.articles');
+});
 
-                <p>{{ Str::limit($article->content, 120) }}</p>
-            </div>
+/*
+|--------------------------------------------------------------------------
+| AUTH ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-            <img src="https://picsum.photos/160/110?random={{ $loop->index }}"
-                 class="rounded">
-        </article>
-        @endforeach
-    </div>
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
 
-    <!-- SIDEBAR KANAN -->
-    <aside class="col-md-4">
-        <h5 class="fw-bold mb-3">Staff Picks</h5>
+/*
+|--------------------------------------------------------------------------
+| ADMIN ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
 
-        @foreach ($editorChoice as $pick)
-            <div class="mb-3">
-                <strong>{{ Str::limit($pick->title, 50) }}</strong>
-                <small class="text-muted d-block">
-                    {{ $pick->created_at->diffForHumans() }}
-                </small>
-            </div>
-        @endforeach
-    </aside>
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-</div>
-@endsection
+        Route::get('/users', [AdminController::class, 'users'])->name('users.index');
+        Route::get('/staff/create', [AdminController::class, 'createStaff'])->name('staff.create');
+        Route::post('/staff/store', [AdminController::class, 'storeStaff'])->name('staff.store');
+
+        // ARTICLE MANAGEMENT
+        Route::resource('articles', ArticleController::class);
+
+        // CATEGORY MANAGEMENT
+        Route::resource('categories', CategoryController::class);
+    });
+
+/*
+|--------------------------------------------------------------------------
+| STAFF ROUTES  ✅ FIXED
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:staff'])
+    ->prefix('staff')
+    ->name('staff.')
+    ->group(function () {
+
+        // ✅ STAFF DASHBOARD (INI YANG KURANG)
+        Route::get('/dashboard', function () {
+            return view('staff.dashboard');
+        })->name('dashboard');
+
+        // ARTICLE MANAGEMENT (STAFF)
+        Route::resource('articles', StaffArticleController::class);
+
+        // OPTIONAL: kalau sidebar staff punya kategori & user
+        Route::resource('categories', StaffCategoryController::class)->only(['index']);
+        Route::resource('users', StaffUserController::class)->only(['index']);
+    });

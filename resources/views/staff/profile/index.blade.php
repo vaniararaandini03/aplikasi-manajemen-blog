@@ -1,16 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Article;
-use App\Models\Category;
-use App\Http\Controllers\StaffDashboardController;
+
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\StaffDashboardController;
 use App\Http\Controllers\StaffArticleController;
+
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\CategoryController;
 
@@ -28,6 +28,7 @@ Route::get('/search', [GuestController::class, 'search'])->name('guest.search');
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
+
     Route::get('/articles/{article}', [GuestController::class, 'showArticle'])
         ->name('guest.article.show');
 
@@ -100,13 +101,16 @@ Route::middleware(['auth', 'role:staff'])
     ->name('staff.')
     ->group(function () {
 
+        // DASHBOARD
         Route::get('/dashboard', [StaffDashboardController::class, 'index'])
             ->name('dashboard');
 
+        // PROFIL
         Route::get('/profile', function () {
             return view('staff.profile.index');
         })->name('profile');
 
+        // STAFF ARTICLE
         Route::prefix('articles')->name('articles.')->group(function () {
             Route::get('/', [StaffArticleController::class, 'index'])->name('index');
             Route::get('/create', [StaffArticleController::class, 'create'])->name('create');

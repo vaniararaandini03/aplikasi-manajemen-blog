@@ -2,11 +2,10 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'Staff – Ruang Artikel')</title>
+    <title>@yield('title', 'Dashboard Staff')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
         * { box-sizing: border-box; }
@@ -14,11 +13,10 @@
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
-            background: #fff;
+            background: #f7f8fa;
             color: #242424;
         }
 
-        /* ===== HEADER ===== */
         header {
             position: fixed;
             top: 0;
@@ -34,40 +32,55 @@
             z-index: 1000;
         }
 
-        header h1 {
-            font-family: 'Merriweather', serif;
-            font-size: 1.4rem;
-            margin: 0;
-            font-weight: 700;
-        }
-
         header a {
-            color: inherit;
             text-decoration: none;
+            color: #111;
+            font-weight: 600;
+            font-size: 1.1rem;
         }
 
         .btn-logout {
-            background: none;
             border: none;
-            color: #555;
-            font-weight: 500;
+            background: none;
             cursor: pointer;
+            font-weight: 500;
+            color: #555;
         }
 
-        .btn-logout:hover {
-            color: #000;
-        }
-
-        /* ===== SIDEBAR ===== */
         .sidebar {
             position: fixed;
             top: 64px;
             left: 0;
-            width: 220px;
+            width: 240px;
             height: calc(100vh - 64px);
-            border-right: 1px solid #eee;
-            padding: 24px 16px;
             background: #fff;
+            border-right: 1px solid #eee;
+            padding: 20px 16px;
+        }
+
+        .profile-box {
+            text-align: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 16px;
+        }
+
+        .profile-box img {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin-bottom: 8px;
+        }
+
+        .profile-box h4 {
+            margin: 6px 0 2px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .profile-box span {
+            font-size: 0.8rem;
+            color: #777;
         }
 
         .sidebar a {
@@ -76,9 +89,8 @@
             margin-bottom: 6px;
             text-decoration: none;
             color: #6b6b6b;
-            font-weight: 500;
             border-radius: 8px;
-            transition: background 0.2s, color 0.2s;
+            font-weight: 500;
         }
 
         .sidebar a:hover {
@@ -92,22 +104,30 @@
             font-weight: 600;
         }
 
-        /* ===== CONTENT ===== */
         main {
             margin-top: 64px;
-            margin-left: 220px;
-            padding: 40px 32px;
-            max-width: 1000px;
+            margin-left: 240px;
+            padding: 32px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 6px 18px rgba(0,0,0,.04);
+        }
+
+        .number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-top: 8px;
         }
     </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
-    <h1>
-        <a href="{{ route('staff.dashboard') }}">Ruang Artikel</a>
-    </h1>
+    <a href="{{ route('staff.dashboard') }}">Ruang Artikel</a>
 
     <form method="POST" action="{{ route('logout') }}">
         @csrf
@@ -115,8 +135,14 @@
     </form>
 </header>
 
-<!-- SIDEBAR STAFF -->
 <aside class="sidebar">
+
+    <div class="profile-box">
+        <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=1a73e8&color=fff">
+        <h4>{{ auth()->user()->name }}</h4>
+        <span>Staff</span>
+    </div>
+
     <a href="{{ route('staff.dashboard') }}"
        class="{{ request()->routeIs('staff.dashboard') ? 'active' : '' }}">
         🏠 Dashboard
@@ -126,9 +152,14 @@
        class="{{ request()->routeIs('staff.articles.*') ? 'active' : '' }}">
         ✍️ Artikel
     </a>
+
+    <a href="{{ route('staff.profile') }}"
+       class="{{ request()->routeIs('staff.profile') ? 'active' : '' }}">
+        👤 Profil Saya
+    </a>
+
 </aside>
 
-<!-- CONTENT -->
 <main>
     @yield('content')
 </main>

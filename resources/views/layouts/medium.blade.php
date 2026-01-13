@@ -111,7 +111,7 @@
 <!-- HEADER -->
 <header>
     <h1>
-        <a href="{{ route('admin.dashboard') }}">Ruang Artikel</a>
+        <a href="{{ route('staff.articles.index') }}">Ruang Artikel</a>
     </h1>
 
     <form method="POST" action="{{ route('logout') }}">
@@ -122,13 +122,13 @@
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-    <a href="{{ route('admin.dashboard') }}"
-       class="{{ Route::is('admin.dashboard') ? 'active' : '' }}">
+    <a href="{{ route('staff.articles.index') }}"
+       class="{{ Route::is('staff.articles.index') ? 'active' : '' }}">
         🏠 Dashboard
     </a>
 
-    <a href="{{ route('admin.articles.index') }}"
-       class="{{ Route::is('admin.articles.*') ? 'active' : '' }}">
+    <a href="{{ route('staff.articles.index') }}"
+       class="{{ Route::is('staff.articles.*') ? 'active' : '' }}">
         ✍️ Artikel
     </a>
 </aside>
