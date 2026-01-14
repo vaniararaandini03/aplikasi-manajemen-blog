@@ -3,160 +3,235 @@
 @section('title', 'Profil Saya')
 
 @section('content')
-<div class="container-fluid py-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0"><i class="fas fa-user"></i> Profil Saya</h4>
-                </div>
-                <div class="card-body">
-
-                    {{-- Success/Error Messages --}}
-                    @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle"></i> {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    @endif
-
-                    @if($errors->any())
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <ul class="mb-0">
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    @endif
-
-                    <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-
-                        {{-- Profile Photo Section --}}
-                        <div class="text-center mb-4">
-                            <div class="position-relative d-inline-block">
-                                @if(auth()->user()->profile_image)
-                                    <img src="{{ asset('storage/' . auth()->user()->profile_image) }}"
-                                         alt="Profile Photo"
-                                         class="rounded-circle border"
-                                         style="width: 120px; height: 120px; object-fit: cover;">
-                                @else
-                                    <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center"
-                                         style="width: 120px; height: 120px; font-size: 3rem;">
-                                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                                    </div>
-                                @endif
-
-                                {{-- Photo Upload --}}
-                                <div class="mt-3">
-                                    <label for="profile_image" class="btn btn-outline-primary btn-sm">
-                                        <i class="fas fa-camera"></i> Ubah Foto
-                                    </label>
-                                    <input type="file" id="profile_image" name="profile_image"
-                                           class="d-none" accept="image/*" onchange="previewImage(this)">
-                                </div>
-
-                                {{-- Remove Photo --}}
-                                @if(auth()->user()->profile_image)
-                                    <div class="mt-2">
-                                        <button type="submit" name="remove_photo" value="1"
-                                                class="btn btn-outline-danger btn-sm"
-                                                onclick="return confirm('Apakah Anda yakin ingin menghapus foto profil?')">
-                                            <i class="fas fa-trash"></i> Hapus Foto
-                                        </button>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-
-                        {{-- Personal Information --}}
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="name" class="form-label">Nama Lengkap</label>
-                                <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                       id="name" name="name" value="{{ old('name', auth()->user()->name) }}" required>
-                                @error('name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                       id="email" name="email" value="{{ old('email', auth()->user()->email) }}" required>
-                                @error('email')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        {{-- Account Information (Read-only) --}}
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Role</label>
-                                <input type="text" class="form-control" value="{{ ucfirst(auth()->user()->role) }}" readonly>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Bergabung Sejak</label>
-                                <input type="text" class="form-control"
-                                       value="{{ auth()->user()->created_at->format('d M Y') }}" readonly>
-                            </div>
-                        </div>
-
-                        {{-- Submit Button --}}
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Simpan Perubahan
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-function previewImage(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            // You can add image preview functionality here if needed
-            alert('Foto akan diupload setelah Anda menyimpan perubahan.');
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-</script>
-
 <style>
-.card {
-    border: none;
-    border-radius: 10px;
+.profile-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.profile-subtitle {
+    color: #6b7280;
+    font-size: .9rem;
+    margin-bottom: 24px;
+}
+
+.profile-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+/* CARD */
+.card-box {
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 10px 28px rgba(0,0,0,.06);
 }
 
 .card-header {
-    border-radius: 10px 10px 0 0 !important;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.btn {
-    border-radius: 6px;
+/* FOTO */
+.profile-photo {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.form-control {
-    border-radius: 6px;
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #ede9fe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #6d28d9;
+    overflow: hidden;
 }
 
-.alert {
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.file-info {
+    font-size: .8rem;
+    color: #6b7280;
+}
+
+/* FORM */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: .8rem;
+    margin-bottom: 4px;
+}
+
+.form-group input {
+    padding: 10px 12px;
     border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: .9rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #7c3aed;
+}
+
+/* BUTTON */
+.btn-primary {
+    background: #7c3aed;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-outline {
+    border: 1px solid #7c3aed;
+    background: transparent;
+    color: #7c3aed;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: .85rem;
+}
+
+/* STAT */
+.stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.stat-label {
+    font-size: .8rem;
+    color: #6b7280;
 }
 </style>
+
+{{-- TITLE --}}
+<div class="profile-title">
+    👤 Profil Saya
+</div>
+<div class="profile-subtitle">
+    Kelola informasi akun administrator
+</div>
+
+<div class="profile-layout">
+
+    {{-- LEFT --}}
+    <div class="card-box">
+        <div class="card-header">📋 Informasi Pribadi</div>
+
+        <form method="POST" action="{{ route('admin.profile.update') }}" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+
+            {{-- PHOTO --}}
+            <div class="profile-photo">
+                <div class="avatar">
+                    @if(auth()->user()->profile_image)
+                        <img src="{{ asset('storage/'.auth()->user()->profile_image) }}">
+                    @else
+                        {{ strtoupper(substr(auth()->user()->name,0,1)) }}
+                    @endif
+                </div>
+
+                <div>
+                    <input type="file" name="profile_image">
+                    <div class="file-info">JPG, PNG • Maks 2MB</div>
+                </div>
+            </div>
+
+            {{-- FORM --}}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" name="name" value="{{ auth()->user()->name }}">
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" value="{{ auth()->user()->email }}">
+                </div>
+            </div>
+
+            {{-- PASSWORD --}}
+            <div class="form-grid" style="margin-top:14px">
+                <div class="form-group">
+                    <label>Password Baru</label>
+                    <input type="password" name="password">
+                </div>
+                <div class="form-group">
+                    <label>Konfirmasi Password</label>
+                    <input type="password" name="password_confirmation">
+                </div>
+            </div>
+
+            {{-- ACTION --}}
+            <div style="margin-top:24px; display:flex; justify-content:flex-end;">
+                <button class="btn-primary">💾 Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+
+    {{-- RIGHT --}}
+    <div class="card-box">
+        <div class="card-header">📊 Informasi Akun</div>
+
+        <div class="stat-grid">
+            <div>
+                <div class="stat-number" style="color:#7c3aed">
+                    {{ auth()->user()->articles()->count() ?? 0 }}
+                </div>
+                <div class="stat-label">Artikel</div>
+            </div>
+
+            <div>
+                <div class="stat-number" style="color:#16a34a">
+                    {{ auth()->user()->created_at->diffForHumans() }}
+                </div>
+                <div class="stat-label">Bergabung</div>
+            </div>
+        </div>
+
+        <div style="margin-top:24px; text-align:center">
+            <a href="{{ route('admin.dashboard') }}" class="btn-outline">
+                ← Kembali Dashboard
+            </a>
+        </div>
+    </div>
+
+</div>
 @endsection
