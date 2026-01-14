@@ -75,20 +75,35 @@ class ArticleController extends Controller
     public function update(Request $request, Article $article)
     {
         $request->validate([
-            'title'       => 'required|string|max:255',
-            'author'      => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'content'     => 'required|min:100',
-            'status'      => 'required|in:draft,published',
+            'title'           => 'required|string|max:255',
+            'category_id'     => 'required|exists:categories,id',
+            'content'         => 'required|min:100',
+            'status'          => 'required|in:draft,published',
+            'is_editor_choice' => 'nullable|boolean',
+            'image'           => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $article->update($request->only(
+        $updateData = $request->only([
             'title',
-            'author',
             'category_id',
             'content',
-            'status'
-        ));
+            'status',
+        ]);
+
+        // Handle is_editor_choice checkbox
+        $updateData['is_editor_choice'] = $request->has('is_editor_choice') ? 1 : 0;
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($article->image && \Storage::disk('public')->exists($article->image)) {
+                \Storage::disk('public')->delete($article->image);
+            }
+
+            $updateData['image'] = $request->file('image')->store('articles', 'public');
+        }
+
+        $article->update($updateData);
 
         return redirect()
             ->route('admin.articles.index')

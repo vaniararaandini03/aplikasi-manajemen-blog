@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'Staff – Ruang Artikel')</title>
+    <title>@yield('title', 'Admin – Ruang Artikel')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Font -->
@@ -44,6 +44,31 @@
         header a {
             color: inherit;
             text-decoration: none;
+        }
+
+        .profile-box {
+            text-align: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 16px;
+        }
+
+        .profile-box img {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin-bottom: 8px;
+        }
+
+        .profile-box h4 {
+            margin: 6px 0 2px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .profile-box span {
+            font-size: 0.8rem;
+            color: #777;
         }
 
         .btn-logout {
@@ -115,16 +140,43 @@
     </form>
 </header>
 
-<!-- SIDEBAR STAFF -->
+<!-- SIDEBAR ADMIN -->
 <aside class="sidebar">
-    <a href="{{ route('staff.dashboard') }}"
-       class="{{ request()->routeIs('staff.dashboard') ? 'active' : '' }}">
+    <!-- PROFILE BOX -->
+    <div class="profile-box">
+        @if(auth()->user()->profile_image)
+            <img src="{{ asset('storage/' . auth()->user()->profile_image) }}" alt="Admin Avatar">
+        @else
+            <img src="https://via.placeholder.com/64x64/1a73e8/ffffff?text={{ strtoupper(substr(Auth::user()->name, 0, 1)) }}" alt="Admin Avatar">
+        @endif
+        <h4>{{ Auth::user()->name }}</h4>
+        <span>Administrator</span>
+    </div>
+
+    <!-- NAVIGATION -->
+    <a href="{{ route('admin.dashboard') }}"
+       class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
         🏠 Dashboard
     </a>
 
-    <a href="{{ route('staff.articles.index') }}"
-       class="{{ request()->routeIs('staff.articles.*') ? 'active' : '' }}">
+    <a href="{{ route('admin.articles.index') }}"
+       class="{{ request()->routeIs('admin.articles.*') ? 'active' : '' }}">
         ✍️ Artikel
+    </a>
+
+    <a href="{{ route('admin.categories.index') }}"
+       class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+        📂 Kategori
+    </a>
+
+    <a href="{{ route('admin.users.index') }}"
+       class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+        👥 Pengguna
+    </a>
+
+    <a href="{{ route('admin.profile') }}"
+       class="{{ request()->routeIs('admin.profile') ? 'active' : '' }}">
+        👤 Profil
     </a>
 </aside>
 

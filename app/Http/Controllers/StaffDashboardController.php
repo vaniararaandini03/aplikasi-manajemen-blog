@@ -12,17 +12,26 @@ class StaffDashboardController extends Controller
         $userId = Auth::id();
 
         $totalArticles = Article::where('user_id', $userId)->count();
+
         $publishedArticles = Article::where('user_id', $userId)
-                                    ->where('status', 'published')
-                                    ->count();
+            ->where('status', 'published')
+            ->count();
+
         $draftArticles = Article::where('user_id', $userId)
-                                ->where('status', 'draft')
-                                ->count();
+            ->where('status', 'draft')
+            ->count();
+
+        // ✅ DATA UNTUK CHART.JS
+        $chartData = [
+            'labels' => ['Published', 'Draft'],
+            'values' => [$publishedArticles, $draftArticles],
+        ];
 
         return view('staff.dashboard.index', compact(
             'totalArticles',
             'publishedArticles',
-            'draftArticles'
+            'draftArticles',
+            'chartData'
         ));
     }
 }

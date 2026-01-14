@@ -39,7 +39,19 @@
             <small style="color:#777;">
                 {{ $article->created_at->format('d M Y') }}
                 •
-                {{ ucfirst($article->status) }}
+                @if($article->status == 'published')
+                    <span style="background:#00ab6b;color:#fff;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:500;">Published</span>
+                @else
+                    <span style="background:#fbbc04;color:#000;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:500;">Draft</span>
+                @endif
+                •
+                <a href="{{ route('admin.articles.edit', $article) }}" style="color:#007bff;text-decoration:none;font-size:14px;">Edit</a>
+                •
+                <form method="POST" action="{{ route('admin.articles.destroy', $article) }}" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" style="background:none;border:none;color:#dc3545;text-decoration:none;font-size:14px;cursor:pointer;" onclick="return confirm('Hapus artikel ini?')">Hapus</button>
+                </form>
             </small>
 
         </article>

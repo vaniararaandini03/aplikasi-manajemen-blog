@@ -1,24 +1,136 @@
-@extends('layouts.admin')
+@extends('layouts.staff')
+
+@section('title', 'Edit Artikel')
 
 @section('content')
-<h4>Edit Article</h4>
 
-<form method="POST"
-      action="{{ route('staff.articles.update', $article) }}">
-    @csrf
-    @method('PUT')
+<div style="max-width:800px;margin:0 auto;font-family:Georgia,serif;">
 
-    <div class="mb-3">
-        <input type="text" name="title"
-               value="{{ $article->title }}"
-               class="form-control">
+    <h1 style="font-size:32px;margin-bottom:30px;">Edit Artikel</h1>
+
+    <div style="background:#fff;padding:30px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+
+        {{-- NOTIFIKASI ERROR --}}
+        @if ($errors->any())
+            <div style="background:#ffecec;border:1px solid #f5c2c7;padding:15px;border-radius:8px;margin-bottom:25px;">
+                <strong>Perhatian!</strong>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('staff.articles.update', $article) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+
+            <!-- Judul -->
+            <div style="margin-bottom:20px;">
+                <label>Judul Artikel</label>
+                <input type="text" name="title" value="{{ old('title', $article->title) }}"
+                    style="width:100%;padding:10px;border:1px solid {{ $errors->has('title') ? '#dc3545' : '#ddd' }};">
+                @error('title') <small style="color:red">{{ $message }}</small> @enderror
+            </div>
+
+            <!-- Penulis -->
+            <div style="margin-bottom:20px;">
+                <label>Nama Penulis</label>
+                <input type="text" name="author" value="{{ old('author', $article->author) }}"
+                    style="width:100%;padding:10px;border:1px solid {{ $errors->has('author') ? '#dc3545' : '#ddd' }};">
+                @error('author') <small style="color:red">{{ $message }}</small> @enderror
+            </div>
+
+            <!-- Kategori -->
+            <div style="margin-bottom:20px;">
+                <label>Kategori</label>
+                <select name="category_id"
+                    style="width:100%;padding:10px;border:1px solid {{ $errors->has('category_id') ? '#dc3545' : '#ddd' }};">
+                    <option value="">-- Pilih Kategori --</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}"
+                            {{ old('category_id', $article->category_id) == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('category_id') <small style="color:red">{{ $message }}</small> @enderror
+            </div>
+
+            <!-- Status -->
+            <div style="margin-bottom:20px;">
+                <label>Status Artikel</label>
+                <select name="status"
+                    style="width:100%;padding:10px;border:1px solid {{ $errors->has('status') ? '#dc3545' : '#ddd' }};">
+                    <option value="draft" {{ old('status', $article->status) == 'draft' ? 'selected' : '' }}>Draft</option>
+                    <option value="published" {{ old('status', $article->status) == 'published' ? 'selected' : '' }}>Published</option>
+                </select>
+                @error('status') <small style="color:red">{{ $message }}</small> @enderror
+            </div>
+
+            <!-- Upload File -->
+            <div style="margin-bottom:20px;">
+                <label>Gambar Artikel</label>
+                @if($article->image)
+                    <div style="margin-bottom:10px;">
+                        <img src="{{ asset('storage/' . $article->image) }}" alt="Current Image"
+                             style="max-width:200px;max-height:150px;border:1px solid #ddd;border-radius:8px;">
+                        <p style="margin:5px 0;color:#666;font-size:14px;">Gambar saat ini</p>
+                    </div>
+                @endif
+                <input type="file" name="image"
+                    style="width:100%;padding:8px;border:1px solid {{ $errors->has('image') ? '#dc3545' : '#ddd' }};">
+                <small style="color:#6c757d;">Format JPG/PNG, maksimal 2MB. Kosongkan jika tidak ingin mengubah gambar.</small><br>
+                @error('image') <small style="color:red">{{ $message }}</small> @enderror
+            </div>
+
+            <!-- Isi -->
+            <div style="margin-bottom:30px;">
+                <label>Isi Artikel</label>
+                <textarea id="content" name="content" rows="8"
+                    style="width:100%;padding:12px;border:1px solid {{ $errors->has('content') ? '#dc3545' : '#ddd' }};">{{ old('content', $article->content) }}</textarea>
+
+                <small id="wordCount" style="color:#6c757d;">
+                    Jumlah kata: {{ str_word_count($article->content) }} / 100
+                </small><br>
+
+                @error('content') <small style="color:red">{{ $message }}</small> @enderror
+            </div>
+
+            <button id="submitBtn" type="submit"
+                style="background:#1a8917;color:#fff;padding:10px 22px;border:none;border-radius:20px;">
+                Update Artikel
+            </button>
+        </form>
     </div>
+</div>
 
-    <div class="mb-3">
-        <textarea name="content" rows="8"
-                  class="form-control">{{ $article->content }}</textarea>
-    </div>
+{{-- SCRIPT HITUNG KATA --}}
+<script>
+    const textarea = document.getElementById('content');
+    const counter = document.getElementById('wordCount');
+    const submitBtn = document.getElementById('submitBtn');
 
-    <button class="btn btn-dark">Update</button>
-</form>
+    function countWords(text) {
+        return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+    }
+
+    function updateCounter() {
+        const words = countWords(textarea.value);
+        counter.textContent = `Jumlah kata: ${words} / 100`;
+
+        if (words >= 100) {
+            submitBtn.disabled = false;
+            counter.style.color = 'green';
+        } else {
+            submitBtn.disabled = true;
+            counter.style.color = 'red';
+        }
+    }
+
+    textarea.addEventListener('input', updateCounter);
+    updateCounter();
+</script>
+
 @endsection

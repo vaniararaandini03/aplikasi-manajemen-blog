@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.staff')
 
 @section('title', 'Tambah Artikel')
 
@@ -10,10 +10,10 @@
 
     <div style="background:#fff;padding:30px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
 
-        {{-- NOTIFIKASI ERROR --}}
+        {{-- ERROR BACKEND --}}
         @if ($errors->any())
-            <div style="background:#ffecec;border:1px solid #f5c2c7;padding:15px;border-radius:8px;margin-bottom:25px;">
-                <strong>Perhatian!</strong>
+            <div style="background:#ffecec;border:1px solid #f5c2c7;padding:15px;border-radius:8px;margin-bottom:20px;">
+                <strong>⚠️ Perhatian!</strong>
                 <ul>
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -22,61 +22,71 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.articles.store') }}" method="POST" enctype="multipart/form-data">
+        {{-- WARNING FRONTEND --}}
+        <div id="formWarning"
+            style="display:none;background:#fff3cd;border:1px solid #ffeeba;
+                   padding:12px;border-radius:8px;margin-bottom:20px;color:#856404;">
+            ⚠️ Semua field wajib diisi, isi artikel minimal 100 kata, dan gambar wajib dipilih.
+        </div>
+
+        {{-- 🔴 UBAH DI SINI: TAMBAH enctype --}}
+        <form action="{{ route('staff.articles.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <!-- Judul -->
             <div style="margin-bottom:20px;">
-                <label>Judul Artikel</label>
-                <input type="text" name="title" value="{{ old('title') }}"
-                    style="width:100%;padding:10px;border:1px solid {{ $errors->has('title') ? '#dc3545' : '#ddd' }};">
-                @error('title') <small style="color:red">{{ $message }}</small> @enderror
+                <label>Judul Artikel <span style="color:red">*</span></label>
+                <input type="text" id="title" name="title" class="form-control">
             </div>
 
             <!-- Penulis -->
             <div style="margin-bottom:20px;">
-                <label>Nama Penulis</label>
-                <input type="text" name="author" value="{{ old('author') }}"
-                    style="width:100%;padding:10px;border:1px solid {{ $errors->has('author') ? '#dc3545' : '#ddd' }};">
-                @error('author') <small style="color:red">{{ $message }}</small> @enderror
+                <label>Nama Penulis <span style="color:red">*</span></label>
+                <input type="text" id="author" name="author" class="form-control">
             </div>
 
             <!-- Kategori -->
             <div style="margin-bottom:20px;">
-                <label>Kategori</label>
-                <select name="category_id"
-                    style="width:100%;padding:10px;border:1px solid {{ $errors->has('category_id') ? '#dc3545' : '#ddd' }};">
+                <label>Kategori <span style="color:red">*</span></label>
+                <select id="category" name="category_id" class="form-control">
                     <option value="">-- Pilih Kategori --</option>
                     @foreach($categories as $category)
-                        <option value="{{ $category->id }}"
-                            {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                        <option value="{{ $category->id }}">
                             {{ $category->name }}
                         </option>
                     @endforeach
                 </select>
-                @error('category_id') <small style="color:red">{{ $message }}</small> @enderror
             </div>
 
-            <!-- Upload File -->
+            <!-- Status -->
             <div style="margin-bottom:20px;">
-                <label>Gambar Artikel</label>
-                <input type="file" name="image"
-                    style="width:100%;padding:8px;border:1px solid {{ $errors->has('image') ? '#dc3545' : '#ddd' }};">
-                <small style="color:#6c757d;">Format JPG/PNG, maksimal 2MB</small><br>
-                @error('image') <small style="color:red">{{ $message }}</small> @enderror
+                <label>Status Artikel <span style="color:red">*</span></label>
+                <select id="status" name="status" class="form-control">
+                    <option value="">-- Pilih Status --</option>
+                    <option value="draft">Draft</option>
+                    <option value="published">Publish</option>
+                </select>
+            </div>
+
+            <!-- 🔴 FIELD BARU: GAMBAR -->
+            <div style="margin-bottom:20px;">
+                <label>Gambar Artikel <span style="color:red">*</span></label>
+                <input type="file"
+                       id="image"
+                       name="image"
+                       class="form-control"
+                       accept="image/*">
             </div>
 
             <!-- Isi -->
             <div style="margin-bottom:30px;">
-                <label>Isi Artikel</label>
+                <label>Isi Artikel <span style="color:red">*</span></label>
                 <textarea id="content" name="content" rows="8"
-                    style="width:100%;padding:12px;border:1px solid {{ $errors->has('content') ? '#dc3545' : '#ddd' }};">{{ old('content') }}</textarea>
+                    class="form-control"></textarea>
 
-                <small id="wordCount" style="color:#6c757d;">
+                <small id="wordCount" style="color:red;">
                     Jumlah kata: 0 / 100
-                </small><br>
-
-                @error('content') <small style="color:red">{{ $message }}</small> @enderror
+                </small>
             </div>
 
             <button id="submitBtn" type="submit"
@@ -88,31 +98,44 @@
     </div>
 </div>
 
-{{-- SCRIPT HITUNG KATA --}}
 <script>
-    const textarea = document.getElementById('content');
+    const title = document.getElementById('title');
+    const author = document.getElementById('author');
+    const category = document.getElementById('category');
+    const status = document.getElementById('status');
+    const content = document.getElementById('content');
+    const image = document.getElementById('image');
     const counter = document.getElementById('wordCount');
     const submitBtn = document.getElementById('submitBtn');
+    const warning = document.getElementById('formWarning');
 
     function countWords(text) {
-        return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+        return text.trim().split(/\s+/).filter(w => w.length > 0).length;
     }
 
-    function updateCounter() {
-        const words = countWords(textarea.value);
+    function validateForm() {
+        const words = countWords(content.value);
+
         counter.textContent = `Jumlah kata: ${words} / 100`;
 
-        if (words >= 100) {
-            submitBtn.disabled = false;
-            counter.style.color = 'green';
-        } else {
-            submitBtn.disabled = true;
-            counter.style.color = 'red';
-        }
+        const valid =
+            title.value.trim() !== '' &&
+            author.value.trim() !== '' &&
+            category.value !== '' &&
+            status.value !== '' &&
+            image.files.length > 0 &&
+            words >= 100;
+
+        submitBtn.disabled = !valid;
+        warning.style.display = valid ? 'none' : 'block';
+        counter.style.color = words >= 100 ? 'green' : 'red';
     }
 
-    textarea.addEventListener('input', updateCounter);
-    updateCounter();
+    [title, author, category, status, content, image].forEach(el =>
+        el.addEventListener('input', validateForm)
+    );
+
+    validateForm();
 </script>
 
 @endsection

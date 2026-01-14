@@ -31,17 +31,13 @@
                     <td style="padding:14px;">{{ $user->name }}</td>
                     <td style="padding:14px; color:#555;">{{ $user->email }}</td>
                     <td style="padding:14px;">
-                        <span style="
-                            padding:4px 10px;
-                            border-radius:12px;
-                            font-size:12px;
-                            background:
-                                {{ $user->role === 'Admin' ? '#e6f4ea' : '#eef2ff' }};
-                            color:
-                                {{ $user->role === 'Admin' ? '#1a8917' : '#3730a3' }};
-                        ">
-                            {{ $user->role }}
-                        </span>
+                        @if($user->role == 'admin')
+                            <span style="background:#dc3545;color:#fff;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:500;">Admin</span>
+                        @elseif($user->role == 'staff')
+                            <span style="background:#007bff;color:#fff;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:500;">Staff</span>
+                        @else
+                            <span style="background:#6c757d;color:#fff;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:500;">Guest</span>
+                        @endif
                     </td>
                     <td style="padding:14px; color:#666;">
                         {{ $user->created_at->format('d M Y') }}
