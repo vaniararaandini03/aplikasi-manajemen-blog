@@ -21,6 +21,12 @@ use App\Http\Controllers\Admin\CategoryController;
 Route::get('/', [GuestController::class, 'home'])->name('home');
 Route::get('/search', [GuestController::class, 'search'])->name('guest.search');
 
+Route::get('/articles/{article}', [GuestController::class, 'showArticle'])
+    ->name('guest.article.show');
+
+Route::get('/categories/{category}', [GuestController::class, 'articlesByCategory'])
+    ->name('guest.category.articles');
+
 /*
 |--------------------------------------------------------------------------
 | GUEST LOGIN & REGISTER

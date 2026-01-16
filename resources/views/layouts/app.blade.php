@@ -17,8 +17,9 @@
                         <button class="btn btn-outline-danger btn-sm">Logout</button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}" class="btn btn-primary btn-sm">Login</a>
-                    <a href="{{ route('register') }}" class="btn btn-secondary btn-sm">Register</a>
+                    <a href="{{ route('guest.login') }}" class="btn btn-success btn-sm me-2">Login Guest</a>
+                    <a href="{{ route('login') }}" class="btn btn-primary btn-sm me-2">Login Admin/Staff</a>
+                    <a href="{{ route('register') }}" class="btn btn-secondary btn-sm">Register Admin/Staff</a>
                 @endauth
             </div>
         </div>

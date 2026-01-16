@@ -50,4 +50,18 @@ class GuestController extends Controller
 
         return view('guest.home', compact('articles', 'categories', 'query'));
     }
+
+    public function dashboard()
+    {
+        $articles = Article::where('status', 'published')
+            ->with(['category', 'author'])
+            ->latest()
+            ->paginate(12);
+
+        $categories = Category::withCount([
+            'articles' => fn ($q) => $q->where('status', 'published')
+        ])->get();
+
+        return view('guest.dashboard', compact('articles', 'categories'));
+    }
 }
