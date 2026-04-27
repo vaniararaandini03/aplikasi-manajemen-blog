@@ -45,6 +45,7 @@ class LoginController extends Controller
         return match (auth()->user()->role) {
             'admin' => redirect()->route('admin.dashboard'),
             'staff' => redirect()->route('staff.articles.index'),
+            'guest' => redirect()->route('home'),
             default => redirect()->route('login')
                 ->withErrors(['email' => 'Role tidak dikenali']),
         };

@@ -47,7 +47,7 @@
         @endforelse
     </div>
 
-    <!-- Pagination -->
+<!-- Pagination -->
     {{ $articles->links() }}
 </div>
 @endsection
